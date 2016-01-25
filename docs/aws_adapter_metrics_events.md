@@ -32,7 +32,7 @@ All CloudWatch metrics include a field `namespace=<namespace>` which has one of 
 - `AWS/ElastiCache`
 - `AWS/Lambda`
 
-For each product, the integration can send events with the following format:
+For each product, the adapter can send events with the following format:
 
 - `event_type="<AWS item> Added" item=<item id> msg=<msg>`: An item was added. `<AWS item>` examples are `EC2 Instance`, `RDS DB`, `ELB Load Balancer`, etc. `<item_id>` examples are `i-8a9dbf51`, `db-migration-testing-eeb2ed68`, `jx3ha-ELBauth-1MK7ZYWJBV7MB`, etc. `<msg>` is not always present but when present provides additional detail on the event.
 - `event_type="<AWS item> Removed" item=<item id> msg=<msg>`: An item was removed.

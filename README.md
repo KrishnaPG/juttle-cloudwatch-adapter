@@ -122,9 +122,46 @@ Region is a region like `us-west-2`.
 
 ### Read Options
 
-Currently, the adapter only supports live streaming reads of all
-available AWS information, and as a result does not support any
-options.
+Read command line format and examples:
+
+```Javascript
+read [-cloudwatch (true|false)] [(product filter|item filter) [OR (product filter|item filter)]...]
+
+read product="EC2"                                                        // Return all metrics incl. CloudWatch for all EC2 instances
+read item="EC2:i-966a694d"                                                // Return all CloudWatch metrics for the given EC2 instance
+read -cloudwatch false product="EC2"                                      // Return non-CloudWatch metrics for the set of EC2 instances
+read -cloudwatch false product="EC2" OR product="EBS"                     // Return non-CloudWatch metrics for the set of EC2 instances and EBS volumes
+read item="EC2:i-966a694d" OR item="EBS:vol-56130db1"                     // Return all CloudWatch metrics for the given EC2 instance and EBS volume
+read product="RDS" OR item="EC2:i-966a694d" OR item="EBS:vol-56130db1"    // Return all metrics incl. CloudWatch for all RDS instances.
+                                                                          //    separately, return all CloudWatch metrics for the given EC2/EBS items
+```
+
+#### Options
+
+Name | Type | Required | Description
+-----|------|----------|-------------
+`cloudwatch`  | boolean | no  | Whether or not to additionally return CloudWatch metrics for the given product. Default `true`. If `false`, can not specify an item filter in the filtering expression.
+
+#### Filtering Expression
+
+The filtering expression consists of any number of product or item filters, combined with `OR`.
+
+A product filter has the format `product="<aws product>"`, where `<aws product>` is one of the following:
+
+- `EC2`
+- `EBS`
+- `ELB`
+- `RDS`
+- `CloudFront`
+- `AutoScaling`
+- `ElastiCache`
+- `Lambda`
+
+The returned data will consist of Aggregate Metrics, Demographic Metrics, and AWS Metrics for the specified products. With `cloudwatch=true`, all CloudWatch metrics will be returned for all items for the given product.
+
+An item filter has the format `item="<aws product>:<item name>"`. `<aws product>` is one of the above products. `<item name>` is the name of an item for the given product (EC2 Instance ID, EBS Volume Id, etc). Item filters only relate to CloudWatch metrics, and control the items for which CloudWatch information is returned.
+
+With no filter expression at all, the returned data will consist of all metrics and events for all supported products. Cloudwatch metrics will be included if `cloudwatch=true`.
 
 ## Contributing
 
