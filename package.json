@@ -14,9 +14,7 @@
   "repository": "juttle/juttle-aws-adapter",
   "scripts": {
     "test": "mocha",
-    "jshint": "jshint *.js lib/*.js test/*.js",
-    "style": "jscs *.js lib/*.js test/*.js",
-    "lint": "npm run jshint && npm run style"
+    "lint": "eslint *.js lib/*.js lib/aws/*.js test/*.js"
   },
   "dependencies": {
     "aws-sdk": "^2.2.8",
@@ -30,6 +28,9 @@
     "juttle": ">=0.3.0"
   },
   "devDependencies": {
+    "babel-core": "^6.3.21",
+    "babel-eslint": "^5.0.0-beta6",
+    "eslint": "^1.10.3",
     "chai": "^3.4.1",
     "mocha": "^2.3.4"
   },

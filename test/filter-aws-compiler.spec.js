@@ -23,10 +23,10 @@ function verify_compile_error(source, filter, enable_cloudwatch) {
     });
 
     try {
-        var search_expr = compiler.compile(ast);
+        compiler.compile(ast);
     } catch (e) {
         expect(e).to.be.instanceOf(JuttleErrors.CompileError);
-        expect(e.code).to.equal("RT-ADAPTER-UNSUPPORTED-FILTER");
+        expect(e.code).to.equal('RT-ADAPTER-UNSUPPORTED-FILTER');
         expect(e.info.filter).to.equal(filter);
     }
 }
@@ -117,79 +117,71 @@ describe('aws filter', function() {
 
     describe(' properly returns condition lists for valid cases like ', function() {
         it('Single product match', function() {
-            verify_compile_success('product="EC2"',
-                                   {
-                                       items: {},
-                                       products: ['EC2']
-                                   });
+            verify_compile_success('product="EC2"', {
+                items: {},
+                products: ['EC2']
+            });
         });
 
         it('Multiple product matches', function() {
-            verify_compile_success('product="EC2" OR product="EBS"',
-                                   {
-                                       items: {},
-                                       products: ['EC2', 'EBS']
-                                   });
+            verify_compile_success('product="EC2" OR product="EBS"', {
+                items: {},
+                products: ['EC2', 'EBS']
+            });
         });
 
         it('Multiple product matches w/ duplicates', function() {
-            verify_compile_success('product="EC2" OR product="EC2"',
-                                   {
-                                       items: {},
-                                       products: ['EC2']
-                                   });
+            verify_compile_success('product="EC2" OR product="EC2"', {
+                items: {},
+                products: ['EC2']
+            });
         });
 
         it('Single item match', function() {
-            verify_compile_success('item="EC2:i-cc696a17"',
-                                   {
-                                       items: {
-                                           EC2: ['i-cc696a17']
-                                       },
-                                       products: []
-                                   });
+            verify_compile_success('item="EC2:i-cc696a17"', {
+                items: {
+                    EC2: ['i-cc696a17']
+                },
+                products: []
+            });
         });
 
         it('Multiple item matches', function() {
-            verify_compile_success('item="EC2:i-cc696a17" OR item="EBS:vol-56130db1"',
-                                   {
-                                       items: {
-                                           EBS: ['vol-56130db1'],
-                                           EC2: ['i-cc696a17']
-                                       },
-                                       products: []
-                                   });
+            verify_compile_success('item="EC2:i-cc696a17" OR item="EBS:vol-56130db1"', {
+                items: {
+                    EBS: ['vol-56130db1'],
+                    EC2: ['i-cc696a17']
+                },
+                products: []
+            });
         });
 
         it('Multiple item matches for same product', function() {
-            verify_compile_success('item="EC2:i-cc696a17" OR item="EC2:i-966a694d"',
-                                   {
-                                       items: {
-                                           EC2: ['i-cc696a17', 'i-966a694d']
-                                       },
-                                       products: []
-                                   });
+            verify_compile_success('item="EC2:i-cc696a17" OR item="EC2:i-966a694d"', {
+                items: {
+                    EC2: ['i-cc696a17', 'i-966a694d']
+                },
+                products: []
+            });
         });
 
         it('Multiple item matches with duplicates', function() {
-            verify_compile_success('item="EC2:i-cc696a17" OR item="EC2:i-cc696a17"',
-                                   {
-                                       items: {
-                                           EC2: ['i-cc696a17']
-                                       },
-                                       products: []
-                                   });
+            verify_compile_success('item="EC2:i-cc696a17" OR item="EC2:i-cc696a17"', {
+                items: {
+                    EC2: ['i-cc696a17']
+                },
+                products: []
+            });
         });
 
         it('Mix of item and product matches', function() {
-            verify_compile_success('product="EC2" OR product="EBS" OR item="EC2:i-cc696a17" OR item="EC2:i-966a694d" OR item="EBS:vol-56130db1"',
-                                   {
-                                       products: ['EC2', 'EBS'],
-                                       items: {
-                                           EBS: ['vol-56130db1'],
-                                           EC2: ['i-cc696a17', 'i-966a694d']
-                                       }
-                                   });
+            verify_compile_success('product="EC2" OR product="EBS" OR item="EC2:i-cc696a17" OR item="EC2:i-966a694d" OR item="EBS:vol-56130db1"', {
+                products: ['EC2', 'EBS'],
+                items: {
+                    EBS: ['vol-56130db1'],
+                    EC2: ['i-cc696a17', 'i-966a694d']
+                }
+            });
         });
 
     });
