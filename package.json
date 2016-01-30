@@ -1,17 +1,18 @@
 {
-  "name": "juttle-aws-adapter",
+  "name": "juttle-cloudwatch-adapter",
   "version": "0.1.0",
-  "description": "Juttle adapter for AWS (Amazon Web Services)",
+  "description": "Juttle adapter for Amazon CloudWatch",
   "keywords": [
     "juttle",
     "adapter",
-    "aws"
+    "aws",
+    "cloudwatch"
   ],
-  "homepage": "https://github.com/juttle/juttle-aws-adapter",
-  "bugs": "https://github.com/juttle/juttle-aws-adapter/issues",
+  "homepage": "https://github.com/juttle/juttle-cloudwatch-adapter",
+  "bugs": "https://github.com/juttle/juttle-cloudwatch-adapter/issues",
   "license": "Apache-2.0",
   "main": "index.js",
-  "repository": "juttle/juttle-aws-adapter",
+  "repository": "juttle/juttle-cloudwatch-adapter",
   "scripts": {
     "test": "mocha",
     "lint": "eslint *.js lib/*.js lib/aws/*.js test/*.js"
