@@ -7,6 +7,7 @@ var expect = require('chai').expect;
 var read_config = require('juttle/lib/config/read-config');
 
 describe('cloudwatch adapter', function() {
+    this.timeout(15000);
 
     before(function() {
 
@@ -18,10 +19,10 @@ describe('cloudwatch adapter', function() {
 
         var config = read_config();
 
-        if (! _.has(config, "adapters")) {
-            if (! _.has(process.env, "JUTTLE_CLOUDWATCH_CONFIG") ||
+        if (! _.has(config, 'adapters')) {
+            if (! _.has(process.env, 'JUTTLE_CLOUDWATCH_CONFIG') ||
                 process.env.JUTTLE_CLOUDWATCH_CONFIG === '') {
-                throw new Error("To run this test, you must provide the adapter config via the environment as JUTTLE_CLOUDWATCH_CONFIG.");
+                throw new Error('To run this test, you must provide the adapter config via the environment as JUTTLE_CLOUDWATCH_CONFIG.');
             }
             var cloudwatch_config = JSON.parse(process.env.JUTTLE_CLOUDWATCH_CONFIG);
             config = {
@@ -36,10 +37,38 @@ describe('cloudwatch adapter', function() {
         Juttle.adapters.register(adapter.name, adapter);
     });
 
+    describe(' properly returns errors/warnings for arguments like', function() {
+
+        it(' an -every less than 5 minutes', function() {
+            return check_juttle({
+                program: 'read cloudwatch -every :1m: product="EC2" | view table'
+            })
+            .then(function(result) {
+                expect(result.errors).to.have.length(0);
+                expect(result.warnings).to.have.length(1);
+                expect(result.warnings[0]).to.contain('-every of < 5 minutes may miss CloudWatch metrics');
+            });
+        });
+
+        it(' an -every less than 1 minute', function() {
+            return check_juttle({
+                program: 'read cloudwatch -every :1s: product="EC2" | view table'
+            })
+            .catch(function(err) {
+                expect(err.code).to.equal('RT-ADAPTER-UNSUPPORTED-TIME-OPTION');
+            });
+        });
+
+        // XXX/mstemm ideally we'd like to have tests that test the
+        // config-level overrides for -every warnings and errors work,
+        // but there isn't any way to reconfigure or unload an adapter
+        // right now.
+    });
+
     it(' can read basic info', function() {
         this.timeout(60000);
         return check_juttle({
-            program: 'read cloudwatch -from :5 minutes ago: -to :now: product="EC2" | view table'
+            program: 'read cloudwatch | view table'
         })
         .then(function(result) {
             expect(result.errors).to.have.length(0);

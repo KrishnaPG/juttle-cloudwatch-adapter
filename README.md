@@ -77,7 +77,7 @@ Add a config block like this to `.juttle/config.js`:
 ```Javascript
 {
   "adapters": {
-        "aws": {
+        "cloudwatch": {
             access_key: "--YOUR-ACCESS-KEY-HERE--",
             secret_key: "--YOUR-SECRET-KEY-HERE--",
             region: "--YOUR-REGION-HERE--"
@@ -87,6 +87,15 @@ Add a config block like this to `.juttle/config.js`:
 ```
 
 Region is a region like `us-west-2`.
+
+### Additional Supported Config Options
+
+In addition to the above options, the following options can be included in the `cloudwatch` section of the adapter configuration:
+
+Name                               | Type      | Required | Description
+-----------------------------------|-----------|----------|-------------
+`disable_every_warnings`           | boolean   | no       | Disable warnings when -every is set to less than 5 minutes
+`disable_every_errors`             | boolean   | no       | Disable errors when -every is set to less than 1 minute
 
 ## Usage
 
