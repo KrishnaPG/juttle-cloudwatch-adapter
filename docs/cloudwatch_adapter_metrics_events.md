@@ -3,7 +3,7 @@
 This page describes the specific metrics and events supported by the AWS Adapter.
 
 ## All Products
-All events and metrics include a field `aws_product=<product>`, which identifies the AWS Product related to the metric or event. `<product>` can be one of the following:
+All events and metrics include a field `product=<product>`, which identifies the AWS Product related to the metric or event. `<product>` can be one of the following:
 
 - `EC2`
 - `ELB`
