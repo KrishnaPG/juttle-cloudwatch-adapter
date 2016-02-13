@@ -174,6 +174,7 @@ The following additional CloudWatch metrics are available for redis engines:
 - `name="KeyBasedCmds", value=<val>, item=<cluster-id>`
 - `name="ListBasedCmds", value=<val>, item=<cluster-id>`
 - `name="SetBasedCmds", value=<val>, item=<cluster-id>`
+- `name="SetTypeCmds", value=<val>, item=<cluster-id>`
 - `name="SortedSetBasedCmds", value=<val>, item=<cluster-id>`
 - `name="StringBasedCmds", value=<val>, item=<cluster-id>`
 - `name="BytesUsedForCache", value=<val>, item=<cluster-id>`
