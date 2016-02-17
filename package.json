@@ -1,6 +1,6 @@
 {
   "name": "juttle-cloudwatch-adapter",
-  "version": "0.1.0",
+  "version": "0.0.99",
   "description": "Juttle adapter for Amazon CloudWatch",
   "keywords": [
     "juttle",
