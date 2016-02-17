@@ -8,7 +8,6 @@ var expect = require('chai').expect;
 var read_config = require('juttle/lib/config/read-config');
 
 describe('cloudwatch adapter', function() {
-    this.timeout(15000);
 
     before(function() {
 
@@ -226,7 +225,6 @@ describe('cloudwatch adapter', function() {
         }
 
         it(' using defaults (all products, statistics=Average)', function() {
-            this.timeout(60000);
             return check_juttle({
                 program: 'read cloudwatch | view text'
             })
@@ -240,7 +238,6 @@ describe('cloudwatch adapter', function() {
         });
 
         it(' using EC2, statistics=Minimum', function() {
-            this.timeout(60000);
             return check_juttle({
                 program: 'read cloudwatch -statistics ["Minimum"] product="EC2" | view text'
             })
@@ -254,7 +251,6 @@ describe('cloudwatch adapter', function() {
         });
 
         it(' using ELB, statistics=Average,Minimum', function() {
-            this.timeout(60000);
             return check_juttle({
                 program: 'read cloudwatch -statistics ["Minimum", "Average"] product="ELB" | view text'
             })
@@ -278,7 +274,6 @@ describe('cloudwatch adapter', function() {
 
         it(' with -period to get greater aggregations', function() {
             let num_default_points;
-            this.timeout(60000);
             return check_juttle({
                 program: 'read cloudwatch -last :1 hour: product="EC2" | view text'
             })

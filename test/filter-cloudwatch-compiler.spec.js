@@ -1,3 +1,4 @@
+'use strict';
 var JuttleParser = require('juttle/lib/parser');
 var SemanticPass = require('juttle/lib/compiler/semantic');
 var JuttleErrors = require('juttle/lib/errors');

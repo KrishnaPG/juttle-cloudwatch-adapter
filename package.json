@@ -14,25 +14,23 @@
   "main": "index.js",
   "repository": "juttle/juttle-cloudwatch-adapter",
   "scripts": {
-    "test": "mocha",
-    "lint": "eslint *.js lib/*.js lib/aws/*.js test/*.js"
+    "test": "gulp test",
+    "lint": "gulp lint"
   },
   "dependencies": {
     "aws-sdk": "^2.2.8",
     "diff": "^2.2.1",
     "bluebird": "^3.0.5",
-    "extendable-base": "^0.3.1",
     "moment": "^2.10.6",
     "underscore": "^1.8.3"
   },
-  "peerDependencies": {
-    "juttle": ">=0.4.0"
-  },
-  "devDependencies": {
-    "babel-core": "^6.3.21",
-    "babel-eslint": "^5.0.0-beta6",
-    "eslint": "^1.10.3",
+    "devDependencies": {
     "chai": "^3.4.1",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^1.1.1",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
+    "istanbul": "^0.4.2",
     "mocha": "^2.3.4"
   },
   "engines": {
