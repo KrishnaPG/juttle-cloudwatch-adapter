@@ -7,7 +7,7 @@ The Cloudwatch adapter fetches metrics from the [Amazon CloudWatch API](https://
 
 The full set of metrics and events are described [here](./docs/cloudwatch_adapter_metrics_events.md).
 
-The Cloudwatch Adapter is very closely related to the [Juttle AWS Adapter](https://github.com/juttle/juttle-cloudwatch-adapter). The Cloudwatch adapter fetches historical monitoring information for the specific items in a user's AWS infrastructure. The AWS adapter fetches current information about the demographics, capabilities, and configuration of a user's AWS resources and applications.
+The Cloudwatch Adapter is very closely related to the [Juttle AWS Adapter](https://github.com/juttle/juttle-aws-adapter). The Cloudwatch adapter fetches historical monitoring information for the specific items in a user's AWS infrastructure. The AWS adapter fetches current information about the demographics, capabilities, and configuration of a user's AWS resources and applications.
 
 ## AWS Product Coverage
 
