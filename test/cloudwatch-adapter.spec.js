@@ -68,8 +68,19 @@ describe('cloudwatch adapter', function() {
     describe(' can read metrics', function() {
 
         function validate_point(point, statistics) {
+            var expected_dimensions = {
+                AutoScaling: 'AutoScalingGroupName',
+                CloudFront: 'DistributionId',
+                EBS: 'VolumeId',
+                EC2: 'InstanceId',
+                ElastiCache: 'CacheClusterId',
+                ELB: 'LoadBalancerName',
+                Lambda: 'FunctionName',
+                RDS: 'DBInstanceIdentifier'
+            };
+
             var expected_metrics = {
-                AutoScaling: {
+                'AWS/AutoScaling': {
                     GroupMinSize: {units: 'Count'},
                     GroupMaxSize: {units: 'Count'},
                     GroupDesiredCapacity: {units: 'Count'},
@@ -79,7 +90,7 @@ describe('cloudwatch adapter', function() {
                     GroupTerminatingInstances: {units: 'Count'},
                     GroupTotalInstances: {units: 'Count'}
                 },
-                CloudFront: {
+                'AWS/CloudFront': {
                     Requests: {units: 'Count'},
                     BytesDownloaded: {units: 'Bytes'},
                     BytesUploaded: {units: 'Bytes'},
@@ -87,7 +98,7 @@ describe('cloudwatch adapter', function() {
                     '4xxErrorRate': {units: 'Percent'},
                     '5xxErrorRate': {units: 'Percent'}
                 },
-                EBS: {
+                'AWS/EBS': {
                     VolumeReadBytes: {units: 'Bytes'},
                     VolumeWriteBytes: {units: 'Bytes'},
                     VolumeReadOps: {units: 'Count'},
@@ -99,7 +110,7 @@ describe('cloudwatch adapter', function() {
                     VolumeThroughputPercentage: {units: 'Percent'},
                     VolumeConsumedReadWriteOps: {units: 'Count'}
                 },
-                EC2: {
+                'AWS/EC2': {
                     DiskReadOps: {units: 'Count'},
                     DiskWriteOps: {units: 'Count'},
                     DiskReadBytes: {units: 'Bytes'},
@@ -112,7 +123,7 @@ describe('cloudwatch adapter', function() {
                     StatusCheckFailed_Instance: {units: 'Count'},
                     StatusCheckFailed_System: {units: 'Count'}
                 },
-                ElastiCache: {
+                'AWS/ElastiCache': {
                     CPUUtilization: {units: 'Percent'},
                     FreeableMemory: {units: 'Bytes'},
                     NetworkBytesIn: {units: 'Bytes'},
@@ -168,7 +179,7 @@ describe('cloudwatch adapter', function() {
                     NewItems: {units: 'Count'},
                     UnusedMemory: {units: 'Bytes'}
                 },
-                ELB: {
+                'AWS/ELB': {
                     HealthyHostCount: {units: 'Count'},
                     UnHealthyHostCount: {units: 'Count'},
                     RequestCount: {units: 'Count'},
@@ -183,13 +194,13 @@ describe('cloudwatch adapter', function() {
                     SurgeQueueLength: {units: 'Count'},
                     SpilloverCount: {units: 'Count'}
                 },
-                Lambda: {
+                'AWS/Lambda': {
                     Invocations: {units: 'Count'},
                     Errors: {units: 'Count'},
                     Duration: {units: 'Milliseconds'},
                     Throttles: {units: 'Count'}
                 },
-                RDS: {
+                'AWS/RDS': {
                     BinLogDiskUsage: {units: 'Bytes'},
                     CPUUtilization: {units: 'Percent'},
                     CPUCreditUsage: {units: 'Count'},
@@ -215,13 +226,25 @@ describe('cloudwatch adapter', function() {
                 }
             };
 
-            expect(point).to.contain.keys(['time', 'metric_type', 'product', 'namespace', 'name', 'item', 'statistic', 'value', 'units']);
+            expect(point).to.contain.keys(['time', 'metric_type', 'product', 'namespace', 'name', 'dimension', 'item', 'statistic', 'value', 'units']);
             expect(point.metric_type).to.equal('AWS CloudWatch');
-            expect(_.keys(expected_metrics)).to.include(point.product);
-            expect(point.namespace).to.equal(`AWS/${point.product}`);
-            expect(_.keys(expected_metrics[point.product])).to.include(point.name);
+            expect(point.dimension).to.equal(expected_dimensions[point.product]);
+            expect(_.keys(expected_dimensions)).to.include(point.product);
+
+            // AutoScaling is slightly different--there can be
+            // per-group metrics, in which case the namespace is
+            // AWS/AutoScaling. Additionally, there are EC2-style
+            // metrics for the group as a whole, which are returned
+            // with the namespace AWS/EC2.
+            if (point.product === 'AutoScaling') {
+                expect(['AWS/AutoScaling', 'AWS/EC2']).to.include(point.namespace);
+            } else {
+                expect(point.namespace).to.equal(`AWS/${point.product}`);
+            }
+
+            expect(_.keys(expected_metrics[point.namespace])).to.include(point.name);
             expect(statistics).to.include(point.statistic);
-            expect(point.units).to.equal(expected_metrics[point.product][point.name].units);
+            expect(point.units).to.equal(expected_metrics[point.namespace][point.name].units);
         }
 
         it(' using defaults (all products, statistics=Average)', function() {
