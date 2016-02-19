@@ -144,7 +144,7 @@ Other boolean logic such as NOT is not supported.
 
 Here are some example filter expressions:
 
-```Javascript
+```Juttle
 // A single product
 read cloudwatch product="EC2" | ...
 
