@@ -1,6 +1,12 @@
 # Change Log
 This file documents all notable changes to juttle-aws-adapter. The release numbering uses [semantic versioning](http://semver.org).
 
+## 0.2.0
+
+### Major Changes
+- Modify filtering expression to support metrics in addition to products/items.
+- Item/Metric filtering can be expressed using ANDs between products and items/metrics.
+
 ## 0.1.2
 
 ### Minor Changes

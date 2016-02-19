@@ -273,6 +273,19 @@ describe('cloudwatch adapter', function() {
             });
         });
 
+        it(' using EC2 and metric="CPUUtilization", statistics=Minimum', function() {
+            return check_juttle({
+                program: 'read cloudwatch -statistics ["Minimum"] product="EC2" AND metric="CPUUtilization" | view text'
+            })
+            .then(function(result) {
+                expect(result.errors).to.have.length(0);
+                expect(result.warnings).to.have.length(0);
+                for(let point of result.sinks.text) {
+                    validate_point(point, ['Minimum']);
+                }
+            });
+        });
+
         it(' using ELB, statistics=Average,Minimum', function() {
             return check_juttle({
                 program: 'read cloudwatch -statistics ["Minimum", "Average"] product="ELB" | view text'
