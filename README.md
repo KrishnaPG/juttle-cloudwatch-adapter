@@ -25,8 +25,7 @@ The adapter is known to work with the following products:
 ## Examples
 
 ```
-read cloudwatch -period 300 -statistics ['Average'] -from :30 minutes ago: -to :now: item='EC2:i-00c5c6db'
-    | filter name='CPUUtilization'
+read cloudwatch -period 300 -statistics ['Average'] -last :30 minutes: product="EC2" AND item='i-00c5c6db' AND metric='CPUUtilization'
     | view table
 
 ┌────────────────────────────────────┬─────────────────────┬──────────────────────────┬───────────────┬───────────────┬─────────────────────┬──────────────┬───────────┬──────────────┬───────────┐
@@ -104,14 +103,7 @@ Name                               | Type      | Required | Description
 Read command line format and examples:
 
 ```Javascript
-read [-period period] [-statistics [<stat>[, 'stat', ...]] [(product filter|item filter) [OR (product filter|item filter)]...]
-
-read product="EC2"                                                        // Return all metrics for all EC2 instances
-read item="EC2:i-966a694d"                                                // Return all metrics for the given EC2 instance
-read product="EC2" OR product="EBS"                                       // Return all metrics for the set of EC2 instances and EBS volumes
-read item="EC2:i-966a694d" OR item="EBS:vol-56130db1"                     // Return all metrics for the given EC2 instance and EBS volume
-read product="RDS" OR item="EC2:i-966a694d" OR item="EBS:vol-56130db1"    // Return all metrics for all RDS instances.
-                                                                          //    separately, return all metrics for the given EC2/EBS items
+read [-period period] [-statistics [<stat>[, 'stat', ...]] [(product/metric/item filter) [OR (product/metric/item filter)]...]
 ```
 
 #### Options
@@ -125,7 +117,9 @@ Name             | Type   | Required | Description
 
 #### Filtering Expression
 
-The filtering expression consists of any number of product or item filters, combined with `OR`.
+The filtering expression is a variable length list of conditions joined by OR. A condition is a product, a product + metric, a product + item, or a product + metric + item.
+
+If no filtering expression is provided, the returned data will consist of all metrics for all supported products.
 
 A product filter has the format `product="<aws product>"`, where `<aws product>` is one of the following:
 
@@ -140,9 +134,40 @@ A product filter has the format `product="<aws product>"`, where `<aws product>`
 
 The returned data will consist of metrics for all items for the given product.
 
-An item filter has the format `item="<aws product>:<item name>"`. `<aws product>` is one of the above products. `<item name>` is the name of an item for the given product (EC2 Instance ID, EBS Volume Id, etc). Item filters control the items for which CloudWatch information is returned.
+An item filter has the format `item="<item name>"`, specifying a specific item (e.g. "i-cc696a17" for EC2, "vol-56130db1" for EBS). If any item field is specified, the data returned is CloudWatch metrics for the specified item.
 
-With no filter expression at all, the returned data will consist of all metrics for all supported products.
+A metric filter has the format `metric="<metric>"`, specifying a specific metric (e.g. "CPUUtilization" for EC2, "VolumeReadBytes" for EBS). If any metric field is specified, only those CloudWatch metrics are returned.
+
+To combine products and items, use AND (e.g. product="EC2" and item="i-cc696a17"). You can also specify items and metrics using a concise format with the product included, using the form `item="<aws product>:<item name>"` or `metric="<aws product>:<metric name>"`.
+
+Other boolean logic such as NOT is not supported.
+
+Here are some example filter expressions:
+
+```Javascript
+// A single product
+read cloudwatch product="EC2" | ...
+
+// Multiple products
+read cloudwatch product="EC2" OR product="EBS" | ...
+
+// A product and an item
+read cloudwatch product="EC2" AND item="i-cc696a17" | ...
+
+// A product and an item (concise format)
+read cloudwatch item="EC2:i-cc696a17" | ...
+
+// A product and a metric
+read cloudwatch product="EC2" AND metric="CPUUtilization" | ...
+
+// A product, metric, and item
+read cloudwatch product="EC2" AND metric="CPUUtilization" AND item="i-cc696a17" | ...
+
+// Groups of products, metrics, and items
+read cloudwatch (product="EC2" AND item="i-cb955911" AND metric="DiskReadOps") OR
+                 metric="EBS:DiskWriteBytes" OR
+                 product="RDS"| ...
+```
 
 ## Contributing
 
