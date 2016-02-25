@@ -1,8 +1,7 @@
 'use strict';
 var _ = require('underscore');
-var juttle_test_utils = require('juttle/test/runtime/specs/juttle-test-utils');
-var Juttle = require('juttle/lib/runtime').Juttle;
-var CloudWatchAdapter = require('../');
+var path = require('path');
+var juttle_test_utils = require('juttle/test').utils;
 var check_juttle = juttle_test_utils.check_juttle;
 var expect = require('chai').expect;
 var read_config = require('juttle/lib/config/read-config');
@@ -32,14 +31,16 @@ describe('cloudwatch adapter', function() {
             cloudwatch_config = JSON.parse(process.env.JUTTLE_CLOUDWATCH_CONFIG);
         }
 
-        var adapter = CloudWatchAdapter(cloudwatch_config, Juttle);
+        cloudwatch_config.path = path.resolve(__dirname, '..');
 
-        Juttle.adapters.register(adapter.name, adapter);
+        juttle_test_utils.configureAdapter({
+            cloudwatch: cloudwatch_config
+        });
     });
 
-    describe(' properly returns errors/warnings for arguments like', function() {
+    describe('properly returns errors/warnings for arguments like', function() {
 
-        it(' an -every less than 5 minutes', function() {
+        it('an -every less than 5 minutes', function() {
             return check_juttle({
                 program: 'read cloudwatch -every :1m: product="EC2" | view table'
             })
@@ -50,12 +51,14 @@ describe('cloudwatch adapter', function() {
             });
         });
 
-        it(' an -every less than 1 minute', function() {
+        it('an -every less than 1 minute', function() {
             return check_juttle({
                 program: 'read cloudwatch -every :1s: product="EC2" | view table'
+            }).then(() => {
+                throw new Error('Program ran when it should have returned an error');
             })
             .catch(function(err) {
-                expect(err.code).to.equal('RT-ADAPTER-UNSUPPORTED-TIME-OPTION');
+                expect(err.code).to.equal('ADAPTER-UNSUPPORTED-TIME-OPTION');
             });
         });
 
@@ -65,7 +68,7 @@ describe('cloudwatch adapter', function() {
         // right now.
     });
 
-    describe(' can read metrics', function() {
+    describe('can read metrics', function() {
 
         function validate_point(point, statistics) {
             var expected_dimensions = {
@@ -247,7 +250,7 @@ describe('cloudwatch adapter', function() {
             expect(point.units).to.equal(expected_metrics[point.namespace][point.name].units);
         }
 
-        it(' using defaults (all products, statistics=Average)', function() {
+        it('using defaults (all products, statistics=Average)', function() {
             return check_juttle({
                 program: 'read cloudwatch | view text'
             })
@@ -260,7 +263,7 @@ describe('cloudwatch adapter', function() {
             });
         });
 
-        it(' using EC2, statistics=Minimum', function() {
+        it('using EC2, statistics=Minimum', function() {
             return check_juttle({
                 program: 'read cloudwatch -statistics ["Minimum"] product="EC2" | view text'
             })
@@ -273,7 +276,7 @@ describe('cloudwatch adapter', function() {
             });
         });
 
-        it(' using EC2 and metric="CPUUtilization", statistics=Minimum', function() {
+        it('using EC2 and metric="CPUUtilization", statistics=Minimum', function() {
             return check_juttle({
                 program: 'read cloudwatch -statistics ["Minimum"] product="EC2" AND metric="CPUUtilization" | view text'
             })
@@ -286,7 +289,7 @@ describe('cloudwatch adapter', function() {
             });
         });
 
-        it(' using ELB, statistics=Average,Minimum', function() {
+        it('using ELB, statistics=Average,Minimum', function() {
             return check_juttle({
                 program: 'read cloudwatch -statistics ["Minimum", "Average"] product="ELB" | view text'
             })
@@ -308,7 +311,7 @@ describe('cloudwatch adapter', function() {
             });
         });
 
-        it(' with -period to get greater aggregations', function() {
+        it('with -period to get greater aggregations', function() {
             let num_default_points;
             return check_juttle({
                 program: 'read cloudwatch -last :1 hour: product="EC2" | view text'
