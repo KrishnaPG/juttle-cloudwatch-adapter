@@ -225,7 +225,8 @@ describe('cloudwatch adapter', function() {
 
                     // Not documented on RDS Cloudwatch API page, but
                     // adding here so validation will still pass
-                    TransactionLogsDiskUsage: {units: 'Bytes'}
+                    TransactionLogsDiskUsage: {units: 'Bytes'},
+                    OldestReplicationSlotLag: {units: 'Bytes'}
                 }
             };
 
