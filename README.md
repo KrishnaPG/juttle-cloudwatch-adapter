@@ -45,6 +45,8 @@ read cloudwatch -period 300 -statistics ['Average'] -last :30 minutes: product="
 └────────────────────────────────────┴─────────────────────┴──────────────────────────┴───────────────┴───────────────┴─────────────────────┴──────────────┴───────────┴──────────────┴───────────┘
 ```
 
+An end-to-end example is described [here](https://github.com/juttle/juttle-engine/tree/master/examples/aws-cloudwatch) and deployed to the demo system [demo.juttle.io](http://demo.juttle.io/?path=/examples/aws-cloudwatch/index.juttle).
+
 ## Installation
 
 Like Juttle itself, the adapter is installed as a npm package. Both Juttle and
