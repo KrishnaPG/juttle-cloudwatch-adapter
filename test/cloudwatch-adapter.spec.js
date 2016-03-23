@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 'use strict';
 var _ = require('underscore');
 var path = require('path');
@@ -121,6 +122,8 @@ describe('cloudwatch adapter', function() {
                     CPUUtilization: {units: 'Percent'},
                     NetworkOut: {units: 'Bytes'},
                     NetworkIn: {units: 'Bytes'},
+                    NetworkPacketsOut: {units: 'Count'},
+                    NetworkPacketsIn: {units: 'Count'},
                     CPUCreditUsage: {units: 'Count'},
                     CPUCreditBalance: {units: 'Count'},
                     StatusCheckFailed_Instance: {units: 'Count'},
@@ -246,9 +249,15 @@ describe('cloudwatch adapter', function() {
                 expect(point.namespace).to.equal(`AWS/${point.product}`);
             }
 
-            expect(_.keys(expected_metrics[point.namespace])).to.include(point.name);
-            expect(statistics).to.include(point.statistic);
-            expect(point.units).to.equal(expected_metrics[point.namespace][point.name].units);
+            // We allow metrics not in the above set--Cloudwatch adds
+            // new metrics from time to time, so those shouldn't
+            // result in test failures. We do log a warning, though.
+            if (! _.contains(_.keys(expected_metrics[point.namespace]), point.name)) {
+                console.log(`Unexpected Cloudwatch metric ${point.name}. Consider adding to set of supported metrics.`);
+            } else {
+                expect(statistics).to.include(point.statistic);
+                expect(point.units).to.equal(expected_metrics[point.namespace][point.name].units);
+            }
         }
 
         it('using defaults (all products, statistics=Average)', function() {

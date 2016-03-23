@@ -1,6 +1,11 @@
 # Change Log
 This file documents all notable changes to juttle-cloudwatch-adapter. The release numbering uses [semantic versioning](http://semver.org).
 
+## 0.4.0
+Released 2016-03-23
+### Minor Changes
+- Updated to be compatible with Juttle 0.7.x. [[#13](https://github.com/juttle/juttle-cloudwatch-adapter/pull/13)].
+
 ## 0.3.0
 Released 2016-02-26
 
